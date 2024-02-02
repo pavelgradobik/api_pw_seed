@@ -13,10 +13,49 @@ export class PlayWRequest {
           this.options.url = url.toString();
           return this;
      }
-     
-     middleUrl(middleUrl: string | URL): this {
+
+     // probably remove set to avoid confusion in future use this is no setter
+
+     // rename to smth more usameble plan to use when api/resourseCollectiion/resourse
+     setMiddleUrl(middleUrl: string | URL): this {
           this.options.middleUrl = middleUrl.toString();
           return this;
+     }
+
+     setMethod(method: string): this {
+          this.options.method = method;
+          return this;
+     }
+
+     setHeaders(headers: Record<string, string>): this {
+          this.options.headers = this.options.headers ?? {};
+          this.options.headers = {...this.options.headers, ...headers};
+          return this;
+     }
+
+     setBody(data: object): this {
+          this.options.data = data;
+          return this;
+     }
+
+     //params after ? in the url
+
+     async sendRequest<T>() {
+          if (!this.options.url) {
+               throw new Error('URL is undefined');
+          }
+
+          const requestContext =  await request.newContext({
+               baseURL: this.options.url,
+          });
+
+          const response = await requestContext.fetch(this.options.url ?? this.options.middleUrl , {
+               ...this.options
+          });
+
+          const responseBody = response.json() as T;
+          
+
      }
 
 }
